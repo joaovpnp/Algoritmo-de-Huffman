@@ -13,11 +13,6 @@ main = do putStr "Digite o diretorio do arquivo: "
           writeFile "Compact.txt" newTxt
 
 
-printTree Leaf = return ()
-printTree (Node a left right) = do printTree left
-                                   putStrLn ("\t" ++ show a)
-                                   printTree right
-
 wordsTree c Leaf = Node (c, 1) Leaf Leaf
 wordsTree c (Node (letter, q) left right)
     | c == letter = Node (letter, q+1) left right
