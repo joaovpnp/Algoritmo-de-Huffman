@@ -24,6 +24,7 @@ wordsTree c (Node (letter, q) left right)
     | otherwise = Node (letter, q) left (wordsTree c right)
 
 countWords cs = foldr wordsTree Leaf cs
+
 treeToList Leaf = []
 treeToList (Node a left right) = treeToList left ++ [a] ++ treeToList right
 
@@ -32,5 +33,10 @@ auxSort (x:xs) 1 = x : auxSort xs (length xs)
 auxSort ((letter, q):b:xs) listLength
     | q <= snd b = auxSort ((letter,q):xs ++ [b]) (listLength-1)
     | otherwise = auxSort (b:(letter,q):xs) (length ((letter, q):b:xs))
+
 sortList xs = auxSort xs (length xs)
 
+quantitySum xs = foldr ((+) . snd) 0 xs
+
+huffmanTree [a,b] = Node (fst a, 2) (Node a Leaf Leaf) (Node b Leaf Leaf)
+huffmanTree (a:b:xs) = Node (fst a,quantitySum (a:b:xs)) (Node a Leaf Leaf) (huffmanTree (b:xs))
