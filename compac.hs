@@ -1,16 +1,17 @@
 import System.IO
 
-type Word' = String
-type Quantity = Integer
-
 data Tree a = Node a (Tree a) (Tree a) | Leaf deriving Show
 
-main = do putStr("Digite o diretorio do arquivo: ")
+main = do putStr "Digite o diretorio do arquivo: "
           hFlush stdout
           arq <- getLine
           txt <- readFile arq
-          let list = sortList( treeToList (countWords txt))
-          encriptation list (huffmanTree (reverse list))
+          let list = reverse (sortList (treeToList (countWords txt)))
+          let tree = huffmanTree list
+          writeFile "cripto.txt" (encryption list tree)
+          let newTxt = encoding txt tree
+          writeFile "Compact.txt" newTxt
+
 
 printTree Leaf = return ()
 printTree (Node a left right) = do printTree left
@@ -44,6 +45,8 @@ code x (Node a (Node b Leaf Leaf) right)
     | x == fst a = [snd b]
     | otherwise = snd a : code x right
 
-encriptation [] _ = return ()
-encriptation ((c,q):ds) tree = do putStrLn([c] ++ "=" ++ code c tree)
-                                  encriptation ds tree
+encryption [] _ = []
+encryption ((c,q):ds) tree = [c] ++ "=" ++ code c tree ++ "\n" ++ encryption ds tree
+
+encoding [] _ = []
+encoding (x:xs) tree = code x tree ++ encoding xs tree
