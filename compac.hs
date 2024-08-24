@@ -24,4 +24,13 @@ wordsTree c (Node (letter, q) left right)
     | otherwise = Node (letter, q) left (wordsTree c right)
 
 countWords cs = foldr wordsTree Leaf cs
+treeToList Leaf = []
+treeToList (Node a left right) = treeToList left ++ [a] ++ treeToList right
+
+auxSort [] _ = []
+auxSort (x:xs) 1 = x : auxSort xs (length xs)
+auxSort ((letter, q):b:xs) listLength
+    | q <= snd b = auxSort ((letter,q):xs ++ [b]) (listLength-1)
+    | otherwise = auxSort (b:(letter,q):xs) (length ((letter, q):b:xs))
+sortList xs = auxSort xs (length xs)
 
