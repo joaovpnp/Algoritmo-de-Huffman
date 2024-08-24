@@ -9,8 +9,8 @@ main = do putStr("Digite o diretorio do arquivo: ")
           hFlush stdout
           arq <- getLine
           txt <- readFile arq
-          let test = countWords txt
-          printTree test
+          let list = sortList( treeToList (countWords txt))
+          encriptation list (huffmanTree (reverse list))
 
 printTree Leaf = return ()
 printTree (Node a left right) = do printTree left
@@ -36,7 +36,14 @@ auxSort ((letter, q):b:xs) listLength
 
 sortList xs = auxSort xs (length xs)
 
-quantitySum xs = foldr ((+) . snd) 0 xs
+huffmanTree [a,b] = Node (fst a, '1') (Node (fst a, '0') Leaf Leaf) (Node (fst b, '0') Leaf Leaf)
+huffmanTree (a:b:xs) = Node (fst a, '1') (Node (fst a, '0') Leaf Leaf) (huffmanTree (b:xs))
 
-huffmanTree [a,b] = Node (fst a, 2) (Node a Leaf Leaf) (Node b Leaf Leaf)
-huffmanTree (a:b:xs) = Node (fst a,quantitySum (a:b:xs)) (Node a Leaf Leaf) (huffmanTree (b:xs))
+code _ (Node a Leaf Leaf) = []
+code x (Node a (Node b Leaf Leaf) right)
+    | x == fst a = [snd b]
+    | otherwise = snd a : code x right
+
+encriptation [] _ = return ()
+encriptation ((c,q):ds) tree = do putStrLn([c] ++ "=" ++ code c tree)
+                                  encriptation ds tree
